@@ -1,4 +1,6 @@
 import re
+import io
+import sys
 import functools
 import tokenize
 import collections
@@ -95,7 +97,7 @@ def parse_unified_diff(diff: Optional[str] = None) -> Dict[str, Set[int]]:
 
 class LineNumberPlugin:
     name = __name__
-    version = '0.1.8'
+    version = '0.1.13'
 
     def __init__(self, tree, total_lines, filename):
         self.total_lines = total_lines
@@ -111,14 +113,14 @@ class LineNumberPlugin:
     def add_options(cls, options_manager):
         options_manager.add_option(
             '--max-linenumber',
-            type='int',
+            type=int,
             default=None,
             parse_from_config=True,
             help='Default max line limit for a python module'
         )
         options_manager.add_option(
             '--linenumber',
-            type='str',
+            type=str,
             comma_separated_list=True,
             default=[],
             parse_from_config=True,
@@ -128,7 +130,7 @@ class LineNumberPlugin:
     @classmethod
     def parse_options(cls, options):
         cls.filesizes = config_parser(options.linenumber)
-        cls.diff = options.diff
+        cls.diff = False
         cls.default_limit = options.max_linenumber
 
     def run(self):
